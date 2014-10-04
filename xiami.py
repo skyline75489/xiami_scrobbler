@@ -24,11 +24,16 @@ headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:27.0) 
 
 xiami_url = 'http://www.xiami.com/space/charts-recent/u/41714420/'
 scrobbler = Scrobbler('skyline75489', '989f9717dce59b6c2f40a6ee940fa95c')
+last_scrobble_time = 0
 
 def get_tracks():
     r = requests.get(xiami_url, headers=headers)
     soup = BeautifulSoup(r.content)
-    global last_time
+    if last_scrobble_time == 0:
+        minutes = 5;
+    else:
+        minutes = (datetime.now() - last_scrobble_time).seconds/60
+        
     track_times = soup.findAll('td', class_='track_time')
     track_times = [re.search(u'\d+', track_time.text).group()
                 for track_time in track_times
@@ -42,7 +47,7 @@ def get_tracks():
         exists_times = [int(track_time) for track_time in track_times
                   if int(track_time) < 10]
         track_times = [int(track_time) for track_time in track_times
-                 if int(track_time) < 5]
+                 if int(track_time) < minutes]
         record_time = None
         if track_times:
             record_time = datetime.now() - timedelta(minutes=track_times[0])
@@ -87,6 +92,7 @@ def get_tracks():
 def scrobble(title, artist, timestamp):
     print(artist, title, timestamp)
     scrobbler.submit(artist, title, timestamp=timestamp)
+    global last_scrobble_time = timestamp
 
 def do_scrobble():
     titles, artists, track_times, record_time = get_tracks()
