@@ -22,7 +22,9 @@ headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:27.0) 
            'DNT': '1',
            'Connection': 'keep-alive'}
 
+# 虾米个人首页地址
 xiami_url = 'http://www.xiami.com/space/charts-recent/u/41714420/'
+# 用户名和MD5的密码
 scrobbler = Scrobbler('skyline75489', '989f9717dce59b6c2f40a6ee940fa95c')
 
 def get_tracks():
@@ -74,13 +76,10 @@ def get_tracks():
             titles = [title['title'] for title in title_htmls]
             return (titles, artists, track_times, record_time)
         elif exists_times:
-            # database.modify_user(user[0], user[2])
             return (None, None, None, None)
         else:
-            # database.not_listening(user[0])
             return (None, None, None, None)
     else:
-        # database.not_listening(user[0])
         return (None, None, None, None)
 
 
